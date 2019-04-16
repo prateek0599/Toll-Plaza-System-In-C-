@@ -1,0 +1,178 @@
+#include<iostream>
+#include<string.h>
+#include<fstream>
+using namespace std;
+class tollplaza
+{           
+            char name[30];
+	        int total_vehicle;
+           	float fare;
+         	char category[30];
+         	
+	public:
+            tollplaza()
+			{
+				fare=0;
+				total_vehicle=0;
+			}		
+			int retveh()
+			{
+				return total_vehicle;
+			}
+			float retfare()
+			{
+				return fare;
+			}
+		    void getdata();
+		    int single_fare();
+		    int return_fare();
+		    void monthly_pass();
+		    void display();
+		    
+};
+
+
+void tollplaza::getdata()
+{   
+    cout<<"\nENTER NAME:";
+    cin>>name;
+	cout<<"\nENTER CATEGORY (2/4wheeler/truck/ambulance/cycle):";
+	cin>>category;
+	total_vehicle++;
+}
+
+void tollplaza::display()
+{
+	
+	cout<<name<<"\t\t\t\t\t"<<category;
+	cout<<"\t\t\t\t\t"<<fare<<endl;
+}
+
+int tollplaza::single_fare()
+{
+	
+	if(strcmpi(category,"2wheeler")==0)
+	fare=50;
+	else if(strcmpi(category,"4wheeler")==0)
+	fare=75;
+	else if(strcmpi(category,"truck")==0)
+	fare=90;
+    else if(strcmpi(category,"ambulance")==0||strcmpi(category,"cycle")==0)
+	fare=0;
+    else 
+    cout<<"\nERROR!!! MATCH NOT FOUND ";
+    return fare;
+}
+
+
+int tollplaza::return_fare()
+{
+	
+	if(strcmpi(category,"2wheeler")==0)
+	fare=90;
+	else if(strcmpi(category,"4wheeler")==0)
+	fare=130;
+	else if(strcmpi(category,"truck")==0)
+	fare=165;
+    else if(strcmpi(category,"ambulance")==0||strcmpi(category,"cycle")==0)
+	fare=0;
+    else 
+    cout<<"\nERROR!!! MATCH NOT FOUND ";
+    
+    return fare;
+}
+
+
+void tollplaza::monthly_pass()
+{
+    fare=fare/5;
+	cout<<"\nNEW AMOUNT TO BE PAID:"<<fare;
+	cout<<"\n\nEXPIRY DATE OF YOUR PASS:31/04/2018";
+	total_vehicle++;
+}
+
+
+main()
+
+{
+    cout<<"\n\n\n\t\t\t\t**********WELCOME TO TOLL PLAZA SYSTEM**********";
+    int n;
+    char ch;
+    tollplaza toll;
+    
+    do
+    {
+      cout<<"\n\n1.ENTER A VEHICLE";
+      cout<<"\n2.DISPLAY DETAILS";
+      cout<<"\n3.TOTAL VEHICLE PASS AND TOTAL FARE";
+      cout<<"\n4.EXIT";
+      cout<<"\nENTER YOUR CHOICE:";
+      cin>>n;
+      switch (n)
+      {
+                
+      	case 1:
+                {     
+		        toll.getdata();
+      	        int a;
+      	        cout<<"\n1.SINGLE SIDE\n2.RETURN ALSO";
+      	        cout<<"\nENTER YOUR CHOICE (1/2):";
+      	        cin>>a;
+      	        switch(a)
+      	        {
+      	        	case 1: cout<<"\nAMOUNT TO BE PAID:"<<toll.single_fare();
+      	        	        break;
+      	        	case 2: cout<<"\nAMOUNT TO BE PAID:"<<toll.return_fare();
+					        break;
+					default:cout<<"\nINVALID INPUT";		        
+      	        	        
+			    }
+	
+			    char c;
+			    cout<<"\nDO YOU HAVE MONTHLY PASS (Y/N):";
+			    cin>>c;
+			    if(c=='y'||c=='Y')
+			    toll.monthly_pass();
+			    
+			    ofstream fout("tollplaza.dat",ios::binary|ios::app);
+			    fout.write((char*)&toll,sizeof(toll));
+			    fout.close();
+			}
+			    break;   
+		case 2: 
+			    {
+			    cout<<"\nNAME\t\t\t\t\tVEHICLE\t\t\t\t\tFARE"<<endl;	
+			    ifstream fin("tollplaza.dat",ios::binary|ios::in);
+			    while(fin.read((char*)&toll,sizeof(toll)))
+			    {
+			    	toll.display();
+				}
+				fin.close();
+		    	}
+				break;
+		case 3: 
+		       {
+		       	float tfare=0;
+		       ifstream fin("tollplaza.dat",ios::binary);
+		       while(fin.read((char*)&toll,sizeof(toll)))
+		       {
+		       
+		       tfare=tfare+toll.retfare();
+		        
+		       }
+		       cout<<"\nTOTAL VEHICLE PASSED:"<<toll.retveh();		
+		       cout<<"\nTOTAL FARE COLLECTED:"<<tfare;
+		       }
+		       break;  
+		       
+		case 4: exit(0);
+		
+		default : cout<<"\nSORRY INPUT IS INVALID";       
+	    
+			    
+        }
+       cout<<"\nDO YOU WANT TO CONTINUE (Y/N):";
+	   cin>>ch;  
+    }while(ch=='y'||ch=='Y');
+    
+}
